@@ -6,6 +6,20 @@ DeepSeek Harness is a plugin-based agent harness on vendored Cordis: **everythin
 
 **Remove this section at the first tagged release.** With no external consumers, prefer the correct foundation over compatibility shims: rename or repackage freely and update every reference together. Backends reject old on-disk formats. SQLite uses monotonic `SCHEMA_VERSION`; `dsh-session` keeps `SESSION_FORMAT_VERSION` at `0` with no compatibility promise.
 
+## Agent skills
+
+### Issue tracker
+
+Track issues in GitHub Issues; see [rules](docs/agents/issue-tracker.md).
+
+### Triage labels
+
+Apply five canonical triage labels; see [mapping](docs/agents/triage-labels.md).
+
+### Domain docs
+
+Before domain exploration, read the multi-context map and active Agent Notes; see [rules](docs/agents/domain.md).
+
 ## Repository layout
 
 ```
@@ -81,19 +95,19 @@ pnpm run demo:acp       # ACP automation server (needs DEEPSEEK_API_KEY)
 
 ### Host sandbox failures
 
-When required `gh`, `pnpm`, build, test, or generator commands fail because the agent sandbox blocks credentials, network, IPC, file watching, or nested `sandbox-exec`, retry unchanged with the narrowest host escalation before diagnosing authentication or project failure. Require sandbox evidence; never bypass genuine test failures or the product sandbox under test.
+If sandbox evidence shows credentials, network, IPC, file watching, or nested `sandbox-exec` blocked required `gh`, `pnpm`, build, test, or generator commands, retry unchanged with the narrowest host escalation before diagnosing authentication or project failure. Never bypass genuine failures or the product sandbox under test.
 
 ### Run relevant checks locally
 
-Run checks before pushes via [dsh-pre-push-checks](.agents/skills/dsh-pre-push-checks/SKILL.md); report only commands run. After `gh stack sync`, validate immediately; do not merge before checks pass.
+Before pushing, follow [dsh-pre-push-checks](.agents/skills/dsh-pre-push-checks/SKILL.md) and report only commands run. Validate immediately after `gh stack sync`; merge only after checks pass.
 
-- Match evidence to the surface: focused tests for behavior, snapshots for model or user output, `doc-sync` for docs, build/hygiene and built smokes for published paths, and real-API e2e for provider behavior.
-- Never default to the full suite or repeat a passing check for commit or push. CI owns exhaustive coverage and the platform matrix; rehearse all locally only by explicit request, for CI diagnosis, or for an irreducibly repository-wide change.
+- Match evidence to the change: focused behavior tests, model/user-output snapshots, `doc-sync` for docs, build/hygiene/built smokes for published paths, and real-API e2e for providers.
+- Do not repeat passing checks for commit/push. CI owns exhaustive coverage and the platform matrix; run the full suite locally only by explicit request, CI diagnosis, or irreducibly repository-wide change.
 - `test:coverage`, not `test`, is the CI coverage gate ([why](docs/testing.md)).
 
 ## Secrets / .env
 
-Real-API tests and demos read `DEEPSEEK_API_KEY`, optional `DEEPSEEK_BASE_URL`, and root `.env`. cordis.yml allows `!!js` (never `!js`) under plugin `config` and entry `disabled`; other metadata stays literal, so conditional composition also uses overlays ([primer](docs/cordis-primer.md#loader-configuration)). Never commit credentials. CI e2e skips without a key; [testing.md](docs/testing.md) owns key policy.
+`DEEPSEEK_API_KEY`, optional `DEEPSEEK_BASE_URL`, and root `.env` configure real-API tests/demos. In cordis.yml, only plugin `config` and entry `disabled` accept `!!js`; metadata stays literal; use overlays for conditional composition ([primer](docs/cordis-primer.md#loader-configuration)). Never commit credentials. CI e2e skips without a key; [testing.md](docs/testing.md) owns key policy.
 
 ## Conventions
 
@@ -142,7 +156,7 @@ Docs accompany every code change: update affected README and JSDoc contracts tog
 
 ## Editing these instructions
 
-`CLAUDE.md` symlinks `AGENTS.md` at root, `packages/`, and `examples/`; edit the real file. Keep each rule self-contained while linking high-level docs. Condense when clarity survives; raise a `verify-doc-budgets` ceiling when the required content genuinely needs more space.
+`CLAUDE.md` symlinks root, `packages/`, and `examples/` `AGENTS.md`; edit targets. Keep rules self-contained, link detail, and condense first; raise `verify-doc-budgets` ceilings only for required content.
 
 ## Vendoring policy
 
